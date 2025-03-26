@@ -8,20 +8,28 @@ REQUIRED_LIBRARIES = ["colorama"]
 
 def install_requirements():
     """تثبيت المكتبات المطلوبة تلقائيًا إذا لم تكن مثبتة."""
+    missing_libs = []
+    
     for lib in REQUIRED_LIBRARIES:
         try:
             __import__(lib)
         except ModuleNotFoundError:
-            print(f"\n[!] {lib} غير مثبت. جاري التثبيت...")
-            subprocess.run([sys.executable, "-m", "pip", "install", lib], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            print(f"[✔] {lib} تم تثبيته بنجاح!\n")
-            # إعادة تحميل المكتبة بعد التثبيت
-            globals()[lib] = __import__(lib)
+            missing_libs.append(lib)
+
+    if missing_libs:
+        print(f"\n[!] المكتبات التالية غير مثبتة: {', '.join(missing_libs)}")
+        print("[⏳] جاري التثبيت...\n")
+
+        # تشغيل PIP للتثبيت باستخدام نفس إصدار Python
+        subprocess.run([sys.executable, "-m", "pip", "install"] + missing_libs, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        print(f"\n[✔] تم تثبيت المكتبات بنجاح! أعد تشغيل الأداة.")
+        sys.exit(1)  # إنهاء الأداة وإعلام المستخدم بإعادة تشغيلها
 
 # تثبيت المكتبات المطلوبة أولًا
 install_requirements()
 
-# استيراد المكتبات بعد التثبيت
+# استيراد المكتبات بعد التأكد من تثبيتها
 from colorama import Fore, Style, init
 
 # تهيئة colorama
