@@ -15,6 +15,8 @@ def install_requirements():
             print(f"\n[!] {lib} غير مثبت. جاري التثبيت...")
             subprocess.run([sys.executable, "-m", "pip", "install", lib], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             print(f"[✔] {lib} تم تثبيته بنجاح!\n")
+            # إعادة تحميل المكتبة بعد التثبيت
+            globals()[lib] = __import__(lib)
 
 # تثبيت المكتبات المطلوبة أولًا
 install_requirements()
@@ -28,9 +30,9 @@ init(autoreset=True)
 def print_colored(text, color):
     print(color + text + Style.RESET_ALL)
 
-def loading_bar(duration):
-    """شريط تحميل حقيقي يستغرق من 3 إلى 5 دقائق"""
-    total_time = random.randint(180, 300)  # 3 إلى 5 دقائق
+def loading_bar():
+    """شريط تحميل حقيقي يستغرق بين 3 إلى 5 دقائق"""
+    total_time = random.randint(180, 300)  # مدة التثبيت بين 3 و 5 دقائق
     step = total_time // 30  # تحديث كل ثانية تقريبًا
     print_colored("\n[⏳] جاري التثبيت، يرجى الانتظار...", Fore.YELLOW)
 
@@ -54,13 +56,13 @@ def main_menu():
 
         if choice == "1":
             print_colored("\n[🔒] جاري تفعيل الحماية للهاتف...", Fore.YELLOW)
-            loading_bar(5)
+            loading_bar()
         elif choice == "2":
             print_colored("\n[🔒] جاري تفعيل الحماية للويندوز...", Fore.YELLOW)
-            loading_bar(5)
+            loading_bar()
         elif choice == "3":
             print_colored("\n[🔒] جاري تفعيل الحماية للينكس...", Fore.YELLOW)
-            loading_bar(5)
+            loading_bar()
         elif choice == "0":
             print_colored("\n[👋] وداعًا!", Fore.RED)
             sys.exit()
