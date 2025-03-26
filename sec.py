@@ -23,8 +23,15 @@ def install_requirements():
         # تشغيل PIP للتثبيت باستخدام نفس إصدار Python
         subprocess.run([sys.executable, "-m", "pip", "install"] + missing_libs, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        print(f"\n[✔] تم تثبيت المكتبات بنجاح! أعد تشغيل الأداة.")
-        sys.exit(1)  # إنهاء الأداة وإعلام المستخدم بإعادة تشغيلها
+        print(f"\n[✔] تم تثبيت المكتبات بنجاح!\n")
+        
+        # محاولة استيراد المكتبات بعد التثبيت
+        for lib in missing_libs:
+            try:
+                globals()[lib] = __import__(lib)
+            except ModuleNotFoundError:
+                print(f"[❌] فشل في تحميل {lib} بعد التثبيت. جرب تشغيل الأداة مجددًا.")
+                sys.exit(1)
 
 # تثبيت المكتبات المطلوبة أولًا
 install_requirements()
