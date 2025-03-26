@@ -1,46 +1,16 @@
-import subprocess
-import sys
 import time
+import sys
 import random
-
-# قائمة المكتبات المطلوبة
-REQUIRED_LIBRARIES = ["colorama"]
-
-def install_requirements():
-    """تثبيت المكتبات المطلوبة تلقائيًا إذا لم تكن مثبتة."""
-    missing_libs = []
-    
-    for lib in REQUIRED_LIBRARIES:
-        try:
-            __import__(lib)
-        except ModuleNotFoundError:
-            missing_libs.append(lib)
-
-    if missing_libs:
-        print(f"\n[!] المكتبات التالية غير مثبتة: {', '.join(missing_libs)}")
-        print("[⏳] جاري التثبيت...\n")
-
-        # تشغيل PIP للتثبيت باستخدام نفس إصدار Python
-        subprocess.run([sys.executable, "-m", "pip", "install"] + missing_libs, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-        print(f"\n[✔] تم تثبيت المكتبات بنجاح!\n")
-        
-        # محاولة استيراد المكتبات بعد التثبيت
-        for lib in missing_libs:
-            try:
-                globals()[lib] = __import__(lib)
-            except ModuleNotFoundError:
-                print(f"[❌] فشل في تحميل {lib} بعد التثبيت. جرب تشغيل الأداة مجددًا.")
-                sys.exit(1)
-
-# تثبيت المكتبات المطلوبة أولًا
-install_requirements()
-
-# استيراد المكتبات بعد التأكد من تثبيتها
+import subprocess
 from colorama import Fore, Style, init
 
-# تهيئة colorama
+# Initialize colorama for Windows
 init(autoreset=True)
+
+def install_requirements():
+    print_colored("\n[✔] Installing required libraries...", Fore.YELLOW)
+    subprocess.run(["pip", "install", "colorama"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print_colored("[✔] All dependencies installed!", Fore.GREEN)
 
 def print_colored(text, color):
     print(color + text + Style.RESET_ALL)
@@ -60,6 +30,7 @@ def loading_bar():
     print_colored("\n[✔] التثبيت اكتمل بنجاح!", Fore.GREEN)
 
 def main_menu():
+    install_requirements()
     while True:
         print_colored("\n========= Security Activation Tool =========", Fore.CYAN)
         print_colored("[1] تفعيل الحماية للهاتف", Fore.BLUE)
